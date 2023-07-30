@@ -1,11 +1,9 @@
 package models
 
 import (
-	"os"
-
+	"github.com/glebarez/sqlite"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
@@ -24,8 +22,8 @@ func InitDB() (err error) {
 		Logger:                                   logger.Default.LogMode(logger.Silent),
 		DisableForeignKeyConstraintWhenMigrating: true,
 	}
-	uri := os.Getenv("DB_URI")
-	dbType := os.Getenv("DB_TYPE")
+	uri := "db.sqlite3"
+	dbType := "sqlite"
 	if dbType == "mysql" {
 		DB, err = gorm.Open(mysql.Open(uri), gCnf)
 	} else if dbType == "sqlite" {
@@ -38,7 +36,11 @@ func InitDB() (err error) {
 		log.Panic("failed to connect database: ", err)
 	}
 
-	err = DB.AutoMigrate()
+	err = DB.AutoMigrate(
+		&Channel{},
+		&Link{},
+		&LastCheckedMessage{},
+	)
 	log.Info("Database initialized")
 	return
 }

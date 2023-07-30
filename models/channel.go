@@ -1,22 +1,24 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
-	tele "gopkg.in/telebot.v3"
+	"github.com/gotd/td/tg"
 	"gorm.io/gorm"
 )
 
-type Chat struct {
+type Channel struct {
 	gorm.Model      `json:"-"`
 	ChannelUsername *string    `gorm:"index;type:varchar(35)" json:"username"`
-	ChannelID       int64      `gorm:"index" json:"user_id"`
+	ChannelID       int64      `gorm:"index" json:"channel_id"`
 	CreatedAt       *time.Time `gorm:"type:datetime" json:"created_at"`
 	UpdatedAt       *time.Time `gorm:"type:datetime" json:"updated_at"`
 }
 
-func (c *Chat) GetOrCreate(chat *tele.Chat) (created bool, err error) {
-	DB.Where("channel_id = ?", c.ChannelID).First(&c)
+func (c *Channel) GetOrCreate(chat *tg.Channel) (created bool, err error) {
+	fmt.Println(c)
+	DB.Where("channel_id = ?", chat.ID).First(c)
 
 	if c.ID != 0 {
 		created = false
@@ -30,5 +32,6 @@ func (c *Chat) GetOrCreate(chat *tele.Chat) (created bool, err error) {
 	c.CreatedAt = &now
 	c.UpdatedAt = &now
 
+	err = DB.Create(c).Error
 	return
 }

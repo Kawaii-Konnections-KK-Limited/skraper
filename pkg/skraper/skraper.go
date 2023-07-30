@@ -1,5 +1,20 @@
-package pkg
+package skraper
 
-func GetConfigsFromChannel(channelName string, offset int) []Config {
+import (
+	"regexp"
+)
+
+// func GetConfigsFromChannel(channelName string, offset int) []Config {
+
+// }
+
+func FindLinksInText(text string) []string {
+	re := regexp.MustCompile(`vless://[a-z0-9-]+@[a-z0-9.-]+:\d+\S*`)
+	matches := re.FindAllString(text, -1)
+
+	return matches
+}
+
+func CheckPreviousMessages(channels []string) {
 
 }
