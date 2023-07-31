@@ -216,6 +216,9 @@ func Run(ctx context.Context) error {
 						l.Create(p.Channel, link)
 						logrus.Debugf("create link %+v", l)
 					}
+
+					lcm := models.LastCheckedMessage{}
+					lcm.CreateOrUpdate(p.Channel, int64(msg.ID))
 				}
 			}
 
