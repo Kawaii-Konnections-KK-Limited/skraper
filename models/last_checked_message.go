@@ -35,7 +35,7 @@ func (lcm *LastCheckedMessage) CreateOrUpdate(chat *tg.Channel, mid int64) (upda
 		return
 	}
 
-	DB.Where("channel_id = ? AND message_id = ?", c.ID, mid).First(&lcm)
+	DB.Where("channel_id = ?", c.ID).First(&lcm)
 
 	now := time.Now()
 
