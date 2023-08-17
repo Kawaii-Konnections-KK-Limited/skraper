@@ -20,5 +20,17 @@ services:
     volumes:
       - my-db:/var/lib/mysql
 
+  skraper:
+    image: ghcr.io/kawaii-konnections-kk-limited/skraper:latest
+    depends_on:
+      - db
+    env_file:
+      - .env
+    volumes:
+      - ./session:/usr/src/app/sessions
+      - ./config.yaml:/usr/src/app/config.yaml
+      - ./.env:/usr/src/app/.env
+    restart: always
+
 volumes:
   my-db:
