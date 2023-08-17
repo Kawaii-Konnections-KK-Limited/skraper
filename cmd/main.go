@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"skraper/models"
-	"skraper/pkg/telegram"
+
+	"github.com/Kawaii-Konnections-KK-Limited/skraper/models"
+	"github.com/Kawaii-Konnections-KK-Limited/skraper/pkg/telegram"
 )
 
 func main() {

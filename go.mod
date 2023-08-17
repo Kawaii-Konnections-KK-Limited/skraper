@@ -1,4 +1,4 @@
-module skraper
+module github.com/Kawaii-Konnections-KK-Limited/skraper
 
 go 1.20
 

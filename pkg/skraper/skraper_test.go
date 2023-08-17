@@ -1,8 +1,9 @@
 package skraper_test
 
 import (
-	"skraper/pkg/skraper"
 	"testing"
+
+	"github.com/Kawaii-Konnections-KK-Limited/skraper/pkg/skraper"
 
 	"golang.org/x/exp/slices"
 )

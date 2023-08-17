@@ -7,10 +7,11 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"skraper/models"
-	"skraper/pkg/skraper"
 	"strconv"
 	"time"
+
+	"github.com/Kawaii-Konnections-KK-Limited/skraper/models"
+	"github.com/Kawaii-Konnections-KK-Limited/skraper/pkg/skraper"
 
 	pebbledb "github.com/cockroachdb/pebble"
 	"github.com/go-faster/errors"
@@ -372,28 +373,8 @@ func Run(ctx context.Context) error {
 							logrus.Errorf("error in creating links error: %s", err)
 						}
 					}
-
-					// fmt.Println(updated, err)
 				}
 			}
-
-			// Resolve the username to a peer.
-
-			// If the resolved peer is a user, you can use user-specific methods like GetUser to get more details.
-			// if peer.TypeID() == tg.PeerUserTypeID {
-			// 	user, err := api.UsersGetUsers(context.Background(), []tg.InputUserClass{
-			// 		peer.GetUsers(),
-			// 	})
-			// 	if err != nil {
-			// 		log.Fatalf("Error getting user information: %s", err)
-			// 	}
-
-			// 	// Print user details.
-			// 	fmt.Printf("User ID: %d\n", user.ID)
-			// 	fmt.Printf("Username: %s\n", user.Username)
-			// 	fmt.Printf("First Name: %s\n", user.FirstName)
-			// 	fmt.Printf("Last Name: %s\n", user.LastName)
-			// }
 
 			// Waiting until context is done.
 			fmt.Println("Listening for updates. Interrupt (Ctrl+C) to stop.")

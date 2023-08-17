@@ -15,6 +15,10 @@ func FindLinksInText(text string) []string {
 	return matches
 }
 
+func FindVmessLinkInText(text string) []string {
+	return []string{}
+}
+
 func CheckPreviousMessages(channels []string) {
 
 }
