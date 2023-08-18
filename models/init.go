@@ -1,6 +1,8 @@
 package models
 
 import (
+	"os"
+
 	"github.com/glebarez/sqlite"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
@@ -22,8 +24,8 @@ func InitDB() (err error) {
 		Logger:                                   logger.Default.LogMode(logger.Silent),
 		DisableForeignKeyConstraintWhenMigrating: true,
 	}
-	uri := "db.sqlite3"
-	dbType := "sqlite"
+	uri := os.Getenv("DB_URI")
+	dbType := os.Getenv("DB_TYPE")
 	if dbType == "mysql" {
 		DB, err = gorm.Open(mysql.Open(uri), gCnf)
 	} else if dbType == "sqlite" {

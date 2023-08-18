@@ -8,8 +8,13 @@ import (
 	"os/signal"
 
 	"github.com/Kawaii-Konnections-KK-Limited/skraper/models"
+	"github.com/Kawaii-Konnections-KK-Limited/skraper/pkg"
 	"github.com/Kawaii-Konnections-KK-Limited/skraper/pkg/telegram"
 )
+
+func init() {
+	pkg.LoadEnv()
+}
 
 func main() {
 	models.InitDB()

@@ -20,7 +20,6 @@ import (
 	"github.com/gotd/contrib/middleware/ratelimit"
 	"github.com/gotd/contrib/pebble"
 	"github.com/gotd/contrib/storage"
-	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"go.etcd.io/bbolt"
 	"go.uber.org/zap"
@@ -59,21 +58,12 @@ func sessionFolder(phone string) string {
 	return "phone-" + string(out)
 }
 
-func loadEnv(envPaths ...string) {
-	err := godotenv.Load(envPaths...)
-	if err != nil {
-		fmt.Println("Error loading .env file:", err)
-	}
-}
-
 func Run(ctx context.Context) error {
 	var arg struct {
 		FillPeerStorage bool
 	}
 	flag.BoolVar(&arg.FillPeerStorage, "fill-peer-storage", false, "fill peer storage")
 	flag.Parse()
-
-	loadEnv()
 
 	// Using ".env" file to load environment variables.
 	// TG_PHONE is phone number in international format.
