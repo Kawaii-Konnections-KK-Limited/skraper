@@ -9,7 +9,7 @@ import (
 // }
 
 func FindLinksInText(text string) []string {
-	re := regexp.MustCompile(`vless://[a-z0-9-]+@[a-z0-9.-@]+:\d+\S*`)
+	re := regexp.MustCompile(`vless:\/\/[a-zA-Z0-9\-]+@[a-zA-Z0-9\.\-]+:[0-9]+[^\s]+`)
 	matches := re.FindAllString(text, -1)
 
 	return matches
