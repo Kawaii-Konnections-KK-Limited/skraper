@@ -200,7 +200,7 @@ func Run(ctx context.Context) error {
 
 			for _, channel := range TelegramConfig.Channels {
 				if channelUsername == channel {
-					links := skraper.FindLinksInText(msg.Message)
+					links := skraper.FindLinks(msg.Message)
 
 					for _, link := range links {
 						l := models.Link{}
@@ -353,7 +353,7 @@ func Run(ctx context.Context) error {
 						continue
 					}
 
-					links := skraper.FindLinksInText(cmsg.Message)
+					links := skraper.FindLinks(cmsg.Message)
 
 					for _, link := range links {
 						l := models.Link{}

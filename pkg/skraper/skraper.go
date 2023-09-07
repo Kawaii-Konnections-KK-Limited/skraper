@@ -8,31 +8,35 @@ import (
 
 // }
 
-func FindLinksInText(text string) []string {
+func FindLinks(text string) []string {
 	re := regexp.MustCompile(`vless:\/\/[a-zA-Z0-9%\-]+@[a-zA-Z0-9\.\-]+:[0-9]+[^\s]+`)
 	matches := re.FindAllString(text, -1)
 
 	return matches
 }
 
-func FindVmessLinkInText(text string) []string {
+func FindVmessLinks(text string) []string {
 	re := regexp.MustCompile(`vmess://[a-z0-9-]+\S*`)
 	matches := re.FindAllString(text, -1)
 	return matches
 }
 
-func CheckPreviousMessages(channels []string) {
-
+func FindSSLinks(text string) []string {
+	re := regexp.MustCompile(`ss:\/\/[A-Za-z0-9\-_]+@[A-Za-z0-9\.\-]+:\d+#[^\n]+`)
+	matches := re.FindAllString(text, -1)
+	return matches
 }
 
 func ExtractLinksFromText(text string) []string {
 	links := make([]string, 0)
 
-	vmessLinks := FindVmessLinkInText(text)
-	vlessLinks := FindLinksInText(text)
+	vmessLinks := FindVmessLinks(text)
+	vlessLinks := FindLinks(text)
+	ssLinks := FindSSLinks(text)
 
 	links = append(links, vmessLinks...)
 	links = append(links, vlessLinks...)
+	links = append(links, ssLinks...)
 
 	return links
 }

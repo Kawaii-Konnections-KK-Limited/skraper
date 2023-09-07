@@ -11,7 +11,7 @@ import (
 
 func TestFindLinksInText(t *testing.T) {
 	t.Run("findtext", func(t *testing.T) {
-		links := skraper.FindLinksInText(`کانفیگ اهدایی:
+		links := skraper.FindLinks(`کانفیگ اهدایی:
 		@iran_ray
 		
 		
@@ -117,7 +117,7 @@ func TestFindVmessLinksInText(t *testing.T) {
 	⚙ isp : Web Dadeh Paydar Co (Ltd)
 	📍 @KralVPN`
 
-	links := skraper.FindVmessLinkInText(vmess)
+	links := skraper.FindVmessLinks(vmess)
 
 	if !slices.Contains(links, "vmess://eydhZGQnOiAnZWR1Lm1yc3BvdC50aycsICdhaWQnOiAnMCcsICdhbHBuJzogJ2gyLGh0dHAvMS4xJywgJ2ZwJzogJ3JhbmRvbWl6ZWQnLCAnaG9zdCc6ICdlZHUubXJzcG90LnRrJywgJ2lkJzogJzZhYzdkM2VlLTgyMzEtNDM2Ny1hZTFhLTI4ZWNlZDQzY2ZiMScsICduZXQnOiAndGNwJywgJ3BhdGgnOiAnL3RjcDE5MzI2JywgJ3BvcnQnOiAnMTkzMjYnLCAncHMnOiAn8J+HrvCfh7cg2KfbjNix2KfZhiDYqNmHINiu2KfYsdisICjZgdmI2LHZiNin2LHYryDYqtix2KfZgduM2qkpIDogQEtyYWxWUE4nLCAnc2N5JzogJ2F1dG8nLCAnc25pJzogJ2VkdS5tcnNwb3QudGsnLCAndGxzJzogJ3RscycsICd0eXBlJzogJ2h0dHAnLCAndic6ICcyJ30=") {
 		fmt.Println(links)
@@ -130,6 +130,8 @@ func TestExtractLinks(t *testing.T) {
 	KralVPN | کرال وی پی ان, [8/26/2023 9:20 AM]
 💯 کانفیگ Vmess
 📍 لوکیشن : 🇫🇷 فرانسه
+
+vless://-----FOXNT-----@165.232.73.53:47632?fp=chrome&pbk=WHLq8tGZxVNzh2gu3qj0WuQ4jJil0x9Ze8PN-AUkSi0&security=reality&sid=4dc29556&sni=Foxnt-Foxnt&spx=%2F&type=grpc#🚀PF181682
 
 🔗 Link : vmess://eydhZGQnOiAnOTUuMTc5LjIxMy43MCcsICdhaWQnOiAnMCcsICdhbHBuJzogJ2gyLGh0dHAvMS4xJywgJ2ZwJzogJycsICdob3N0JzogJycsICdpZCc6ICc3NjdmYThkNS1lOWNhLTQ5NWItOWVkOS0zMzA3ODVjYWEyNjInLCAnbmV0JzogJ2dycGMnLCAncGF0aCc6ICcnLCAncG9ydCc6ICcyMDUzJywgJ3BzJzogJ/Cfh6vwn4e3INmB2LHYp9mG2LPZhyA6IEBLcmFsVlBOJywgJ3NjeSc6ICdhdXRvJywgJ3NuaSc6ICdhLmJvcmVkaG90LmNsb3VkJywgJ3Rscyc6ICd0bHMnLCAndHlwZSc6ICdndW4nLCAndic6ICcyJ30=
 
@@ -906,7 +908,7 @@ KralVPN | کرال وی پی ان, [8/26/2023 2:49 PM]
 
 	fmt.Println(len(l))
 
-	if len(l) != 86 {
+	if len(l) != 87 {
 		t.Error("it not correct")
 	}
 }
