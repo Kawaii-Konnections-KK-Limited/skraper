@@ -32,11 +32,11 @@ func ExtractLinksFromText(text string) []string {
 
 	vmessLinks := FindVmessLinks(text)
 	vlessLinks := FindLinks(text)
-	ssLinks := FindSSLinks(text)
+	// ssLinks := FindSSLinks(text)
 
 	links = append(links, vmessLinks...)
 	links = append(links, vlessLinks...)
-	links = append(links, ssLinks...)
+	// links = append(links, ssLinks...)
 
 	return links
 }

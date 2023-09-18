@@ -353,7 +353,7 @@ func Run(ctx context.Context) error {
 						continue
 					}
 
-					links := skraper.FindLinks(cmsg.Message)
+					links := skraper.ExtractLinksFromText(cmsg.Message)
 
 					for _, link := range links {
 						l := models.Link{}
