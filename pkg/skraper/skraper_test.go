@@ -912,3 +912,22 @@ KralVPN | کرال وی پی ان, [8/26/2023 2:49 PM]
 		t.Error("it not correct")
 	}
 }
+
+func TestTrojanLinks(t *testing.T) {
+
+	t.Run("findtext", func(t *testing.T) {
+		links := skraper.FindTrojanLinks(`
+		trojan://X1TPYbrFSO@foxnt-foxnt.ddns.net:2083?alpn=h2%2Chttp%2F1.1&security=tls&serviceName=-------Telegram-----%40FOXNT------&sni=mohsen.foxnt-telegram-foxnt.shop&type=grpc#🦀PF189565
+		`)
+
+		fmt.Println(len(links), links)
+
+		if len(links) != 1 {
+			t.Error("tf is going on")
+		}
+
+		if !slices.Contains(links, "trojan://X1TPYbrFSO@foxnt-foxnt.ddns.net:2083?alpn=h2%2Chttp%2F1.1&security=tls&serviceName=-------Telegram-----%40FOXNT------&sni=mohsen.foxnt-telegram-foxnt.shop&type=grpc#🦀PF189565") {
+			t.Error("the link finder works shitty!!")
+		}
+	})
+}
