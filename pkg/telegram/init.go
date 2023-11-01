@@ -197,9 +197,12 @@ func Run(ctx context.Context) error {
 			}
 
 			channelUsername, _ := p.Channel.GetUsername()
+			channelId := p.Channel.GetID()
+
+			logrus.Debug("channel ID: ", channelId)
 
 			for _, channel := range TelegramConfig.Channels {
-				if channelUsername == channel {
+				if channelUsername == channel || strconv.Itoa(int(channelId)) == channel {
 					links := skraper.FindLinks(msg.Message)
 
 					for _, link := range links {
