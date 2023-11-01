@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Kawaii-Konnections-KK-Limited/skraper/models"
@@ -202,7 +203,7 @@ func Run(ctx context.Context) error {
 			logrus.Debug("channel ID: ", channelId)
 
 			for _, channel := range TelegramConfig.Channels {
-				if channelUsername == channel || strconv.Itoa(int(channelId)) == channel {
+				if channelUsername == channel[1:] || strconv.Itoa(int(channelId)) == channel[4:] {
 					links := skraper.FindLinks(msg.Message)
 
 					for _, link := range links {
@@ -290,26 +291,48 @@ func Run(ctx context.Context) error {
 			}
 
 			for _, channel := range TelegramConfig.Channels {
-				peer, err := api.ContactsResolveUsername(context.Background(), channel)
-				if err != nil {
-					log.Fatalf("Error resolving username: %s", err)
-					continue
+				var c *tg.Channel
+
+				if strings.HasPrefix(channel, "-") {
+					// channel is a channel ID
+					channelID, err := strconv.Atoi(channel[4:])
+					if err != nil {
+						return errors.Wrap(err, "invalid channel ID")
+					}
+
+					channels, err := client.API().ChannelsGetChannels(ctx, []tg.InputChannelClass{
+						&tg.InputChannel{
+							ChannelID: int64(channelID),
+						},
+					})
+
+					if err != nil || len(channels.GetChats()) == 0 {
+						logrus.Error("error getting channel info", err)
+						continue
+					}
+
+					c, _ = channels.GetChats()[0].(*tg.Channel)
+
 				}
 
-				lenChat := len(peer.GetChats())
+				if strings.HasPrefix(channel, "@") {
+					peer, err := api.ContactsResolveUsername(context.Background(), channel[1:])
+					if err != nil {
+						log.Fatalf("Error resolving username: %s", err)
+						continue
+					}
 
-				if lenChat == 0 || err != nil {
-					logrus.Errorf("couldn't find the peer %s", peer.GetPeer())
-					continue
+					lenChat := len(peer.GetChats())
+
+					if lenChat == 0 || err != nil {
+						logrus.Errorf("couldn't find the peer %s", peer.GetPeer())
+						continue
+					}
+					c, _ = peer.GetChats()[0].(*tg.Channel)
 				}
 
-				channel, ok := peer.GetChats()[0].(*tg.Channel)
-
-				if !ok {
-					logrus.Errorf("error converting chat to channel")
-				}
 				chat := models.Channel{}
-				_, err = chat.GetOrCreate(channel)
+				_, err = chat.GetOrCreate(c)
 
 				if err != nil {
 					logrus.Errorf("couldn't create channel in database %s", err)
@@ -323,14 +346,14 @@ func Run(ctx context.Context) error {
 
 				if mid == 0 {
 					r = tg.MessagesGetHistoryRequest{
-						Peer:     channel.AsInputPeer(),
+						Peer:     c.AsInputPeer(),
 						OffsetID: 0,
 						Limit:    10,
 					}
 
 				} else {
 					r = tg.MessagesGetHistoryRequest{
-						Peer:  channel.AsInputPeer(),
+						Peer:  c.AsInputPeer(),
 						MinID: int(mid),
 					}
 				}
@@ -340,7 +363,7 @@ func Run(ctx context.Context) error {
 
 				for i, msg := range modifiedMessages.GetMessages() {
 					if i == 0 {
-						lcm.CreateOrUpdate(channel, int64(msg.GetID()))
+						lcm.CreateOrUpdate(c, int64(msg.GetID()))
 					}
 
 					fmt.Println(msg)
@@ -360,7 +383,7 @@ func Run(ctx context.Context) error {
 
 					for _, link := range links {
 						l := models.Link{}
-						_, err := l.Create(channel, link)
+						_, err := l.Create(c, link)
 
 						if err != nil {
 							logrus.Errorf("error in creating links error: %s", err)
