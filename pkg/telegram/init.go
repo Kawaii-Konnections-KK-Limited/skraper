@@ -4,11 +4,9 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/Kawaii-Konnections-KK-Limited/skraper/models"
@@ -204,7 +202,7 @@ func Run(ctx context.Context) error {
 
 			for _, channel := range TelegramConfig.Channels {
 				if channelUsername == channel[1:] || strconv.Itoa(int(channelId)) == channel[4:] {
-					links := skraper.FindLinks(msg.Message)
+					links := skraper.ExtractLinksFromText(msg.Message)
 
 					for _, link := range links {
 						l := models.Link{}
@@ -290,107 +288,107 @@ func Run(ctx context.Context) error {
 				fmt.Println("Filled")
 			}
 
-			for _, channel := range TelegramConfig.Channels {
-				var c *tg.Channel
+			// for _, channel := range TelegramConfig.Channels {
+			// 	var c *tg.Channel
 
-				if strings.HasPrefix(channel, "-") {
-					// channel is a channel ID
-					channelID, err := strconv.Atoi(channel[4:])
-					if err != nil {
-						return errors.Wrap(err, "invalid channel ID")
-					}
+			// 	if strings.HasPrefix(channel, "-") {
+			// 		// channel is a channel ID
+			// 		channelID, err := strconv.Atoi(channel[4:])
+			// 		if err != nil {
+			// 			return errors.Wrap(err, "invalid channel ID")
+			// 		}
 
-					channels, err := client.API().ChannelsGetChannels(ctx, []tg.InputChannelClass{
-						&tg.InputChannel{
-							ChannelID: int64(channelID),
-						},
-					})
+			// 		channels, err := client.API().ChannelsGetChannels(ctx, []tg.InputChannelClass{
+			// 			&tg.InputChannel{
+			// 				ChannelID: int64(channelID),
+			// 			},
+			// 		})
 
-					if err != nil || len(channels.GetChats()) == 0 {
-						logrus.Error("error getting channel info", err)
-						continue
-					}
+			// 		if err != nil || len(channels.GetChats()) == 0 {
+			// 			logrus.Error("error getting channel info", err)
+			// 			continue
+			// 		}
 
-					c, _ = channels.GetChats()[0].(*tg.Channel)
+			// 		c, _ = channels.GetChats()[0].(*tg.Channel)
 
-				}
+			// 	}
 
-				if strings.HasPrefix(channel, "@") {
-					peer, err := api.ContactsResolveUsername(context.Background(), channel[1:])
-					if err != nil {
-						log.Fatalf("Error resolving username: %s", err)
-						continue
-					}
+			// 	if strings.HasPrefix(channel, "@") {
+			// 		peer, err := api.ContactsResolveUsername(context.Background(), channel[1:])
+			// 		if err != nil {
+			// 			log.Fatalf("Error resolving username: %s", err)
+			// 			continue
+			// 		}
 
-					lenChat := len(peer.GetChats())
+			// 		lenChat := len(peer.GetChats())
 
-					if lenChat == 0 || err != nil {
-						logrus.Errorf("couldn't find the peer %s", peer.GetPeer())
-						continue
-					}
-					c, _ = peer.GetChats()[0].(*tg.Channel)
-				}
+			// 		if lenChat == 0 || err != nil {
+			// 			logrus.Errorf("couldn't find the peer %s", peer.GetPeer())
+			// 			continue
+			// 		}
+			// 		c, _ = peer.GetChats()[0].(*tg.Channel)
+			// 	}
 
-				chat := models.Channel{}
-				_, err = chat.GetOrCreate(c)
+			// 	chat := models.Channel{}
+			// 	_, err = chat.GetOrCreate(c)
 
-				if err != nil {
-					logrus.Errorf("couldn't create channel in database %s", err)
-				}
+			// 	if err != nil {
+			// 		logrus.Errorf("couldn't create channel in database %s", err)
+			// 	}
 
-				lcm := models.LastCheckedMessage{}
+			// 	lcm := models.LastCheckedMessage{}
 
-				mid := lcm.GetLastMessageID(chat)
+			// 	mid := lcm.GetLastMessageID(chat)
 
-				var r tg.MessagesGetHistoryRequest
+			// 	var r tg.MessagesGetHistoryRequest
 
-				if mid == 0 {
-					r = tg.MessagesGetHistoryRequest{
-						Peer:     c.AsInputPeer(),
-						OffsetID: 0,
-						Limit:    10,
-					}
+			// 	if mid == 0 {
+			// 		r = tg.MessagesGetHistoryRequest{
+			// 			Peer:     c.AsInputPeer(),
+			// 			OffsetID: 0,
+			// 			Limit:    10,
+			// 		}
 
-				} else {
-					r = tg.MessagesGetHistoryRequest{
-						Peer:  c.AsInputPeer(),
-						MinID: int(mid),
-					}
-				}
-				msgs, _ := api.MessagesGetHistory(ctx, &r)
+			// 	} else {
+			// 		r = tg.MessagesGetHistoryRequest{
+			// 			Peer:  c.AsInputPeer(),
+			// 			MinID: int(mid),
+			// 		}
+			// 	}
+			// 	msgs, _ := api.MessagesGetHistory(ctx, &r)
 
-				modifiedMessages, _ := msgs.AsModified()
+			// 	modifiedMessages, _ := msgs.AsModified()
 
-				for i, msg := range modifiedMessages.GetMessages() {
-					if i == 0 {
-						lcm.CreateOrUpdate(c, int64(msg.GetID()))
-					}
+			// 	for i, msg := range modifiedMessages.GetMessages() {
+			// 		if i == 0 {
+			// 			lcm.CreateOrUpdate(c, int64(msg.GetID()))
+			// 		}
 
-					fmt.Println(msg)
+			// 		fmt.Println(msg)
 
-					var cmsg *tg.Message
+			// 		var cmsg *tg.Message
 
-					switch value := msg.(type) {
-					case *tg.Message:
-						cmsg = value
-					case *tg.MessageService:
-						continue
-					default:
-						continue
-					}
+			// 		switch value := msg.(type) {
+			// 		case *tg.Message:
+			// 			cmsg = value
+			// 		case *tg.MessageService:
+			// 			continue
+			// 		default:
+			// 			continue
+			// 		}
 
-					links := skraper.ExtractLinksFromText(cmsg.Message)
+			// 		links := skraper.ExtractLinksFromText(cmsg.Message)
 
-					for _, link := range links {
-						l := models.Link{}
-						_, err := l.Create(c, link)
+			// 		for _, link := range links {
+			// 			l := models.Link{}
+			// 			_, err := l.Create(c, link)
 
-						if err != nil {
-							logrus.Errorf("error in creating links error: %s", err)
-						}
-					}
-				}
-			}
+			// 			if err != nil {
+			// 				logrus.Errorf("error in creating links error: %s", err)
+			// 			}
+			// 		}
+			// 	}
+			// }
 
 			// Waiting until context is done.
 			fmt.Println("Listening for updates. Interrupt (Ctrl+C) to stop.")
