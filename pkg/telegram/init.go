@@ -195,26 +195,19 @@ func Run(ctx context.Context) error {
 				return err
 			}
 
-			channelUsername, _ := p.Channel.GetUsername()
 			channelId := p.Channel.GetID()
 
 			logrus.Debug("channel ID: ", channelId)
+			links := skraper.ExtractLinksFromText(msg.Message)
 
-			for _, channel := range TelegramConfig.Channels {
-				if channelUsername == channel[1:] || strconv.Itoa(int(channelId)) == channel[4:] {
-					links := skraper.ExtractLinksFromText(msg.Message)
-
-					for _, link := range links {
-						l := models.Link{}
-						l.Create(p.Channel, link)
-						logrus.Debugf("create link %+v", l)
-					}
-
-					lcm := models.LastCheckedMessage{}
-					lcm.CreateOrUpdate(p.Channel, int64(msg.ID))
-				}
+			for _, link := range links {
+				l := models.Link{}
+				l.Create(p.Channel, link)
+				logrus.Debugf("create link %+v", l)
 			}
 
+			lcm := models.LastCheckedMessage{}
+			lcm.CreateOrUpdate(p.Channel, int64(msg.ID))
 			if err != nil {
 				return err
 			}
