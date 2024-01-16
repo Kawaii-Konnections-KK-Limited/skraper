@@ -16,7 +16,7 @@ func FindLinks(text string) []string {
 }
 
 func FindVmessLinks(text string) []string {
-	re := regexp.MustCompile(`vmess://[a-z0-9-]+\S*`)
+	re := regexp.MustCompile(`vmess:\/\/[A-Za-z0-9+\/=]+`)
 	matches := re.FindAllString(text, -1)
 	return matches
 }
